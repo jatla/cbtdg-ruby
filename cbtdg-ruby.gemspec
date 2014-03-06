@@ -20,10 +20,12 @@ Gem::Specification.new do |s|
     ".document",
     ".rspec",
     "Gemfile",
+    "Gemfile.lock",
     "LICENSE.txt",
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "cbtdg-ruby.gemspec",
     "lib/cbtdg-ruby.rb",
     "spec/cbtdg-ruby_spec.rb",
     "spec/spec_helper.rb"
