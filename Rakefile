@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "cbtdg-ruby"
   gem.homepage = "http://github.com/jatla/cbtdg-ruby"
   gem.license = "MIT"
-  gem.summary = %Q{Constraint based test data generator using json models}
-  gem.description = %Q{Given a model and constraints in json, test data is generated based on allpairs methodology and constraints applied to prune the data set}
+  gem.summary = %Q{Constraint based test data generator using for models specified as ruby hashes}
+  gem.description = %Q{Given a model and constraints as ruby hash, test data is generated based on allpairs methodology and constraints applied to prune the data set}
   gem.email = "jayaprakash.atla@gmail.com"
   gem.authors = ["jatla"]
   # dependencies defined in Gemfile
