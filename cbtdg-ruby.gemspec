@@ -5,13 +5,14 @@
 
 Gem::Specification.new do |s|
   s.name = "cbtdg-ruby"
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["jatla"]
-  s.date = "2014-03-06"
+  s.date = "2014-03-08"
   s.description = "Given a model and constraints as ruby hash, test data is generated based on allpairs methodology and constraints applied to prune the data set"
   s.email = "jayaprakash.atla@gmail.com"
+  s.executables = ["cbtdg.rb"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -19,12 +20,14 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
     ".rspec",
+    ".travis.yml",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "bin/cbtdg.rb",
     "cbtdg-ruby.gemspec",
     "lib/cbtdg-ruby.rb",
     "spec/cbtdg-ruby_spec.rb",
