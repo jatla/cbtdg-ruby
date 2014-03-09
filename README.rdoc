@@ -1,6 +1,12 @@
-= cbtdg-ruby
+= cbtdg-ruby {<img src="https://travis-ci.org/jatla/cbtdg-ruby.png?branch=master" alt="Build Status" />}[https://travis-ci.org/jatla/cbtdg-ruby]
 
-Description goes here.
+Among the various techniques to generate test data, combinatorial test generation using all-pairs(pairwise) methodology is one. This gem is an effort to apply pairwise methodology to hierarchical data models. Further goal is to have the ability to specify constraints and restrict the test data generated based on those constraints.
+
+Some references to pairwise testing literature if you want to know more:
+
+http://www.pairwise.org 
+http://www.developsense.com/pairwiseTesting.html
+http://aetgweb.argreenhouse.com/papers.shtml
 
 == Contributing to cbtdg-ruby
  
