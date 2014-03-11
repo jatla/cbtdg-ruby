@@ -1,5 +1,6 @@
 require 'singleton'
 require 'pairwise'
+require 'pp'
 
 # Top level class used by cbtdg.rb commandline tool to traverse through
 # hierarchical data models and generate test data using pairwise methodology.
@@ -8,31 +9,44 @@ class ConstraintBasedTestDataGenerator
 	include Singleton
 	include Pairwise
 
-# Top level method to generate test data for a given model using pairwise methodology
-# and write it to the specified output file.
+# Top level method to generate test data and write it to the specified output file.
 #
 # ==== Attributes
 #
 # * +dataModel+ - The dataModel(which is a Hash) for which test data has to be generated.
 # * +outPutFilePath+ - Path of the file to which generated test data needs to be written to.
 
-	def generateTestDataForModel(dataModel, outPutFilePath)
-		copyOfModel = Marshal.load(Marshal.dump(dataModel))
+	def generate(dataModelWithConstraints, outPutFilePath=nil)
+		@dataModel = Marshal.load(Marshal.dump(dataModelWithConstraints[:model]))
+		@constraints = dataModelWithConstraints[:constraints]
+		testTuples = generateTestDataForModel(@dataModel)
+		if !outPutFilePath.nil?
+			outputFile = File.open(outPutFilePath, "w")
+			begin
+				writeToFile(outputFile, dataModelWithConstraints[:model], testTuples)
+			rescue IOError => e
+				puts e
+			ensure
+	  			outputFile.close unless outputFile.nil?
+			end
+		end
+		testTuples
+	end
+
+# Method to generate test data for a given model using pairwise methodology
+#
+# ==== Attributes
+#
+# * +dataModel+ - The dataModel(which is a Hash) for which test data has to be generated.
+
+	def generateTestDataForModel(dataModel)
 		@pairWiseData = {}
-		generatePairWiseData(:model, copyOfModel[:model])
+		generatePairWiseData(:model, dataModel)
 		testTuples = []
 		@pairWiseData[:model].each do |p|
-			tupleHash = {}
-			tupleArray = p.flatten
-			index = 0
-			while(index < tupleArray.length)
-				tupleHash[tupleArray[index]] = tupleArray[index+1]
-				index += 2
-			end
-			testTuples << tupleHash
+			testTuples << convertArrayToHash(p)
 		end
-
-		writeToFile(outPutFilePath, dataModel, testTuples)
+		testTuples
 	end
 
 private
@@ -44,19 +58,15 @@ private
 # * +key+ - The key of the sub-structure in original model.
 # * +data+ - Value for the above key in original model.
 
-	def generatePairWiseData key, value
-		if value.kind_of? Hash
-			constraints = value[:constraints]
-
-			data = value.reject{|k, v| k.eql? :constraints}
+	def generatePairWiseData(key, data)
+		if data.kind_of? Hash
 			data.each do |k, v|
 				data[k] = generatePairWiseData(k,v)
 			end
 			testData = data.values.length > 1 ? combinations(data.values) : data.values[0]
-			testData = applyConstraints(constraints, testData)
-			@pairWiseData[key] = testData
+			@pairWiseData[key] = applyConstraints(key, testData)
 		else
-			value.to_a.each.collect{|a| [key,a]}
+			data.to_a.each.collect{|a| [key,a]}
 		end
 	end
 
@@ -64,12 +74,16 @@ private
 #
 # ==== Attributes
 #
-# * +constraints+ - List of constraints that need to be applied on generated test data.
-# * +testData+ - Generated test data.
+# * +key+ - Key of the sub-structure whose constraints are to be applied.
+# * +testData+ - Generated test data for the sub-structure.
 
-	def applyConstraints constraints, testData
-		# TODO
-		testData
+	def applyConstraints(key, data)
+		if (!@constraints.nil? && !@constraints[key].nil?)
+			@constraints[key].each do |c|
+				data.collect!{|d| c.call(convertArrayToHash(d))}.compact!
+			end
+		end
+		data
 	end
 
 # Helper method that writes generated pairwise data to given file.
@@ -80,28 +94,26 @@ private
 # * +dataModel+ - Original data model for which test data is generated.
 # * +testTuples+ - Test data generated for the given model.
 
-    def writeToFile outPutFilePath, dataModel, testTuples
-    	begin
-  			File.open(outPutFilePath, "w") do |file|
-	  			file.write("MODEL:\n")
-	  			file.write(dataModel.to_s)
-	  			file.write("\n------------------------\n\n")
-	  			file.write("GENERATED TEST DATA:\n")
-	  			testTuples.each_index do |i|
-	  				file.write("#{i}. #{testTuples[i].to_s}\n")
-	  			end
-				file.write("------------------------\n\n")
-
-				file.write("INTERMEDIATE DATA:\n")
-
-	  			@pairWiseData.each do |k, v|
-	  				file.write("#{k} : \n #{v.to_s}\n")
-	  			end
-				file.write("------------------------\n\n")
-			end
-		rescue IOError => e
-  			puts e
+    def writeToFile(outputFile, dataModel, testTuples)
+		outputFile.write("MODEL:\n\n")
+    	PP.pp(dataModel, outputFile)
+		#outputFile.write(dataModel.to_s)
+		outputFile.write("\n------------------------\n\n")
+		outputFile.write("GENERATED TEST DATA:\n\n")
+		testTuples.each_index do |i|
+			outputFile.write("#{i+1}. #{testTuples[i].to_s}\n")
 		end
+		outputFile.write("------------------------\n\n")
+
+		# outputFile.write("INTERMEDIATE DATA:\n\n")
+
+		# @pairWiseData.each do |k, v|
+		# 	outputFile.write("#{k} : \n")
+		# 	PP.pp(v, outputFile)
+		# 	outputFile.write("\n")
+		# 	#outputFile.write("#{k} : \n #{v.to_s}\n")
+		# end
+		# outputFile.write("------------------------\n\n")
     end
 
     # This is copied from the pairwise gem as the array of arrays
@@ -127,4 +139,13 @@ private
       data.reject{|datum| datum.kind_of?(Array)}.empty?
     end
 
+    def convertArrayToHash(array)
+		# The array should be converted using either 
+		# Hash[p] or p.to_h. Need more work on this
+		hash = {}
+		array.flatten.each_slice(2) do |e|
+			hash[e[0]] = e[1]
+		end
+		hash
+    end
 end
