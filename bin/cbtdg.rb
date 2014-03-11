@@ -31,5 +31,5 @@ else
 	puts "Not a valid option. See help!"
 end
 
-ConstraintBasedTestDataGenerator.instance.generateTestDataSetForModel $dataModel, outputFile
+ConstraintBasedTestDataGenerator.instance.generateTestDataForModel $dataModel, outputFile
 

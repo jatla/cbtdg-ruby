@@ -1,13 +1,23 @@
 require 'singleton'
 require 'pairwise'
 
+# Top level class used by cbtdg.rb commandline tool to traverse through
+# hierarchical data models and generate test data using pairwise methodology.
+
 class ConstraintBasedTestDataGenerator
 	include Singleton
 	include Pairwise
 
-	def generateTestDataSetForModel dataModel={}, outPutFilePath
-		copyOfModel = Marshal.load(Marshal.dump(dataModel))
+# Top level method to generate test data for a given model using pairwise methodology
+# and write it to the specified output file.
+#
+# ==== Attributes
+#
+# * +dataModel+ - The dataModel(which is a Hash) for which test data has to be generated.
+# * +outPutFilePath+ - Path of the file to which generated test data needs to be written to.
 
+	def generateTestDataForModel(dataModel, outPutFilePath)
+		copyOfModel = Marshal.load(Marshal.dump(dataModel))
 		@pairWiseData = {}
 		generatePairWiseData(:model, copyOfModel[:model])
 		testTuples = []
@@ -25,33 +35,50 @@ class ConstraintBasedTestDataGenerator
 		writeToFile(outPutFilePath, dataModel, testTuples)
 	end
 
-	def generatePairWiseData key, data
-		if data.kind_of? Hash
+private
+
+# Helper method that generates pairwise data for each sub-structure in the model.
+#
+# ==== Attributes
+#
+# * +key+ - The key of the sub-structure in original model.
+# * +data+ - Value for the above key in original model.
+
+	def generatePairWiseData key, value
+		if value.kind_of? Hash
+			constraints = value[:constraints]
+
+			data = value.reject{|k, v| k.eql? :constraints}
 			data.each do |k, v|
 				data[k] = generatePairWiseData(k,v)
 			end
-			data[key] = data.values.length > 1 ? combinations(data.values) : data.values[0]
-			@pairWiseData[key] = data[key]
+			testData = data.values.length > 1 ? combinations(data.values) : data.values[0]
+			testData = applyConstraints(constraints, testData)
+			@pairWiseData[key] = testData
 		else
-			data.to_a.each.collect{|a| [key,a]}
+			value.to_a.each.collect{|a| [key,a]}
 		end
 	end
 
-	private
-	def combinations(inputs)
-      raise InvalidInputData, "Minimum of 2 inputs are required to generate pairwise test set" unless valid?(inputs)
-      Pairwise::IPO.new(inputs).build
-    end
+# Helper method that applies constraints for each sub-structure.
+#
+# ==== Attributes
+#
+# * +constraints+ - List of constraints that need to be applied on generated test data.
+# * +testData+ - Generated test data.
 
-    def valid?(inputs)
-      array_of_arrays?(inputs) &&
-        inputs.length >= 2 &&
-        !inputs[0].empty? && !inputs[1].empty?
-    end
+	def applyConstraints constraints, testData
+		# TODO
+		testData
+	end
 
-    def array_of_arrays?(data)
-      data.reject{|datum| datum.kind_of?(Array)}.empty?
-    end
+# Helper method that writes generated pairwise data to given file.
+#
+# ==== Attributes
+#
+# * +outPutFilePath+ - Path of the file to which generated test data needs to be written to.
+# * +dataModel+ - Original data model for which test data is generated.
+# * +testTuples+ - Test data generated for the given model.
 
     def writeToFile outPutFilePath, dataModel, testTuples
     	begin
@@ -76,4 +103,28 @@ class ConstraintBasedTestDataGenerator
   			puts e
 		end
     end
+
+    # This is copied from the pairwise gem as the array of arrays
+    # generated from the model were being wrapped into another top level array by
+    # combinations method in Pairwise module.
+
+	def combinations(inputs)
+      raise InvalidInputData, "Minimum of 2 inputs are required to generate pairwise test set" unless valid?(inputs)
+      Pairwise::IPO.new(inputs).build
+    end
+
+    # This is copied from Pairwise module to support combinations method
+
+    def valid?(inputs)
+      array_of_arrays?(inputs) &&
+        inputs.length >= 2 &&
+        !inputs[0].empty? && !inputs[1].empty?
+    end
+
+	# This is copied from Pairwise module to support valid? method
+
+    def array_of_arrays?(data)
+      data.reject{|datum| datum.kind_of?(Array)}.empty?
+    end
+
 end
