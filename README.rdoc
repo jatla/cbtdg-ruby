@@ -12,84 +12,84 @@ Some references to pairwise testing literature if you want to know more:
 
 * Installing gem
 
-	$ gem install cbtdg-ruby
+    $ gem install cbtdg-ruby
 
 * Create a model file
 
     $ vi model.rb
 
-	complexConstraint = lambda {|t| t if ((t[:inner4] != t[:inner5]) && (t[:innermost2] != t[:innermost3]) && (t[:innermost1] > 3))}
-	$dataModel =
-	{
-		model:
-		{
-			outer1:
-			{
-				inner1:
-				{
-					innermost1: (1..5),
-					innermost2: [true, false],
-					innermost3: [true, false]
-				},
-				inner2: [1,-1]
-			},
-			outer2:
-			{
-				inner3: (1..3),
-				inner4: [true, false],
-				inner5: [true, false]
-			}
-		},
-		constraints:
-		{
-			model: [complexConstraint]
-		}
-	}
+    complexConstraint = lambda {|t| t if ((t[:inner4] != t[:inner5]) && (t[:innermost2] != t[:innermost3]) && (t[:innermost1] > 3))}
+    $dataModel =
+    {
+        model:
+        {
+            outer1:
+            {
+                inner1:
+                {
+                    innermost1: (1..5),
+                    innermost2: [true, false],
+                    innermost3: [true, false]
+                },
+                inner2: [1,-1]
+            },
+            outer2:
+            {
+                inner3: (1..3),
+                inner4: [true, false],
+                inner5: [true, false]
+            }
+        },
+        constraints:
+        {
+            model: [complexConstraint]
+        }
+    }
 
 * Running the tool
-	Usage: cbtdg.rb [options] 
-	    -m, --modelFilePath filePath     Path to file containing model and constaints. This is a required parameter.
-	    -o, --outputFilePath filePath    Output file where generated test data set is written to. If not provided test data set would be generated to temp.txt
-	    -h, --help                       Display this screen
+    Usage: cbtdg.rb [options] 
+        -m, --modelFilePath filePath     Path to file containing model and constaints. This is a required parameter.
+        -o, --outputFilePath filePath    Output file where generated test data set is written to. If not provided test data set would be generated to temp.txt
+        -h, --help                       Display this screen
 
-	Example: cbtdg.rb -m model.rb -o testData.txt
+    Example: cbtdg.rb -m model.rb -o testData.txt
 
 * Sample output
 
-	GENERATED TEST DATA:
+    GENERATED TEST DATA:
 
-	1. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
-	2. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
-	3. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
-	4. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
-	5. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
-	6. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
-	7. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
-	8. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
-	9. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
-	10. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
-	11. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
-	12. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
-	13. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
-	14. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
-	15. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
-	16. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
-	17. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
-	18. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
-	19. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
-	20. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
-	21. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
-	22. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
-	23. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
-	24. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
-	25. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
-	26. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
-	27. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
-	28. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
-	29. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
-	30. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
-	31. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
-	32. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
+    1. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
+    2. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
+    3. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
+    4. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
+    5. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
+    6. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
+    7. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
+    8. {:innermost1=>4, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
+    9. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
+    10. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
+    11. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
+    12. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
+    13. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
+    14. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
+    15. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
+    16. {:innermost1=>4, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
+    17. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
+    18. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
+    19. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
+    20. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
+    21. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
+    22. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
+    23. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
+    24. {:innermost1=>5, :innermost2=>true, :innermost3=>false, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
+    25. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>true, :inner5=>false}
+    26. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>2, :inner4=>false, :inner5=>true}
+    27. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>true, :inner5=>false}
+    28. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>1, :inner3=>3, :inner4=>false, :inner5=>true}
+    29. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>true, :inner5=>false}
+    30. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>2, :inner4=>false, :inner5=>true}
+    31. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>true, :inner5=>false}
+    32. {:innermost1=>5, :innermost2=>false, :innermost3=>true, :inner2=>-1, :inner3=>3, :inner4=>false, :inner5=>true}
 
 == Contributing to cbtdg-ruby
  
